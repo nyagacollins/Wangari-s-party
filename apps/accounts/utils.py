@@ -2,7 +2,7 @@ import logging
 import base64
 import io
 from email.utils import formataddr
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -11,30 +11,37 @@ logger = logging.getLogger(__name__)
 
 
 def send_credentials_email(user, password):
-    subject = "Your Invitation & Login Details - Wangari's Birthday"
+    subject = "Your invitation to Wangari's Birthday - login details"
     site = getattr(settings, 'SITE_URL', '') or 'https://wangari.site'
     login_url = f"{site.rstrip('/')}/accounts/login/"
+    from_email_addr = getattr(settings, 'DEFAULT_FROM_EMAIL', '') or getattr(settings, 'EMAIL_HOST_USER', '') or 'noreply@wangari.site'
     context = {
         'user': user,
         'password': password,
         'login_url': login_url,
         'site_url': site.rstrip('/'),
         'name': user.real_name or user.username,
+        'from_email': from_email_addr,
     }
     html_message = render_to_string('emails/credentials_email.html', context)
-    plain_message = strip_tags(html_message)
+    plain_message = render_to_string('emails/credentials_email.txt', context).strip() or strip_tags(html_message)
     try:
         from_name = getattr(settings, 'DEFAULT_FROM_NAME', "Wangari's Birthday")
-        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', '') or getattr(settings, 'EMAIL_HOST_USER', '') or 'noreply@wangari.site'
-        from_header = formataddr((from_name, from_email))
-        reply_to = [a for a in [getattr(settings, 'REPLY_TO_EMAIL', '') or getattr(settings, 'EMAIL_HOST_USER', '')] if a]
+        from_header = formataddr((from_name, from_email_addr))
+        reply_to_addr = getattr(settings, 'REPLY_TO_EMAIL', '') or getattr(settings, 'EMAIL_HOST_USER', '') or from_email_addr
+        reply_to = [reply_to_addr] if reply_to_addr else []
+        connection = get_connection(timeout=getattr(settings, 'EMAIL_TIMEOUT', 30))
         email = EmailMultiAlternatives(
             subject=subject,
             body=plain_message,
             from_email=from_header,
             to=[user.email],
             reply_to=reply_to,
-            headers={'X-Priority': '3'},
+            headers={
+                'X-Priority': '3',
+                'X-Mailer': "Wangari's Birthday Invitation",
+            },
+            connection=connection,
         )
         email.attach_alternative(html_message, 'text/html')
         email.send(fail_silently=False)

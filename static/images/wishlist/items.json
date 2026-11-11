@@ -6,45 +6,5 @@
     "emoji": "🎁",
     "image": "wishlist1.jpeg",
     "image_url": "https://wangari.site/static/images/wishlist/wishlist1.jpeg"
-  },
-  {
-    "title": "Wishlist item 2",
-    "description": "Paste a full image URL in image_url, or put a filename in image (file in static/images/wishlist/).",
-    "link": "",
-    "emoji": "👜",
-    "image": "",
-    "image_url": ""
-  },
-  {
-    "title": "Wishlist item 3",
-    "description": "Edit me.",
-    "link": "",
-    "emoji": "💎",
-    "image": "",
-    "image_url": ""
-  },
-  {
-    "title": "Wishlist item 4",
-    "description": "Edit me.",
-    "link": "",
-    "emoji": "✨",
-    "image": "",
-    "image_url": ""
-  },
-  {
-    "title": "Wishlist item 5",
-    "description": "Edit me.",
-    "link": "",
-    "emoji": "💐",
-    "image": "",
-    "image_url": ""
-  },
-  {
-    "title": "Wishlist item 6",
-    "description": "Edit me.",
-    "link": "",
-    "emoji": "🎁",
-    "image": "",
-    "image_url": ""
   }
 ]
