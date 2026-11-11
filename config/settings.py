@@ -13,10 +13,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# ALLOWED_HOSTS for Render deployment
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.render.com').split(',')
-# Allow all ngrok subdomains automatically
-ALLOWED_HOSTS += ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.io']
+# ALLOWED_HOSTS
+ALLOWED_HOSTS = [h.strip() for h in config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,.onrender.com,.vercel.app').split(',') if h.strip()]
+# Allow common tunnel/deploy subdomains automatically
+ALLOWED_HOSTS += ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.io', '.vercel.app', '.onrender.com']
 
 # -----------------------------
 # DATABASE
@@ -192,18 +192,23 @@ MPESA_ENVIRONMENT = config('MPESA_ENVIRONMENT', default='sandbox')
 MPESA_TEST_MODE = config('MPESA_TEST_MODE', default=False, cast=bool)
 
 # -----------------------------
-# NGROK (for local testing)
+# CSRF trusted origins (tunnels/deployments)
 # -----------------------------
 _callback_url = config('MPESA_CALLBACK_URL', default='')
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
     'https://*.ngrok-free.dev',
     'https://*.ngrok.io',
+    'https://*.vercel.app',
+    'https://*.onrender.com',
 ]
-# Also add the exact callback origin if set
-if _callback_url:
-    from urllib.parse import urlparse
-    _parsed = urlparse(_callback_url)
-    if _parsed.scheme and _parsed.netloc:
-        CSRF_TRUSTED_ORIGINS.append(f'{_parsed.scheme}://{_parsed.netloc}')
+# Also add the exact callback/SITE_URL origins if set
+for _u in (_callback_url, config('SITE_URL', default='')):
+    if _u:
+        from urllib.parse import urlparse
+        _parsed = urlparse(_u)
+        if _parsed.scheme and _parsed.netloc:
+            _origin = f'{_parsed.scheme}://{_parsed.netloc}'
+            if _origin not in CSRF_TRUSTED_ORIGINS:
+                CSRF_TRUSTED_ORIGINS.append(_origin)
 # ---------------------------------------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
