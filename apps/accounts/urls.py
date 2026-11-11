@@ -11,4 +11,5 @@ urlpatterns = [
     path('register-buyer/', views.register_buyer, name='register_buyer'),
     path('manage-buyers/', views.manage_buyers, name='manage_buyers'),
     path('toggle-buyer-status/<int:buyer_id>/', views.toggle_buyer_status, name='toggle_buyer_status'),
+    path('delete-buyer/<int:buyer_id>/', views.delete_buyer, name='delete_buyer'),
 ]

@@ -184,7 +184,7 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER or 'noreply@wangaribirthday.com')
 SERVER_EMAIL = config('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
-SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
+SITE_URL = config('SITE_URL', default='https://wangari.site')
 PASSWORD_RESET_TIMEOUT = 60 * 60  # 1 hour
 
 # -----------------------------

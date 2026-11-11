@@ -34,9 +34,17 @@
                 <td>{% if buyer.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Inactive</span>{% endif %}</td>
                 <td>{{ buyer.date_joined|date:"M d, Y" }}</td>
                 <td>
-                  <a href="{% url 'accounts:toggle_buyer_status' buyer.id %}" class="btn btn-sm btn-outline-{% if buyer.is_active %}danger{% else %}success{% endif %}" title="{% if buyer.is_active %}Deactivate{% else %}Activate{% endif %}">
-                    <i class="fas fa-{% if buyer.is_active %}ban{% else %}check{% endif %}"></i>
-                  </a>
+                  <div class="d-flex gap-2">
+                    <a href="{% url 'accounts:toggle_buyer_status' buyer.id %}" class="btn btn-sm btn-outline-{% if buyer.is_active %}warning{% else %}success{% endif %}" title="{% if buyer.is_active %}Deactivate{% else %}Activate{% endif %}">
+                      <i class="fas fa-{% if buyer.is_active %}ban{% else %}check{% endif %}"></i>
+                    </a>
+                    <form method="post" action="{% url 'accounts:delete_buyer' buyer.id %}" class="m-0" onsubmit="return confirm('Delete this guest? This cannot be undone.');">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete guest">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
               {% endfor %}

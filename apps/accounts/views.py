@@ -120,3 +120,14 @@ def toggle_buyer_status(request, buyer_id):
     status = 'activated' if buyer.is_active else 'deactivated'
     messages.success(request, f'Guest {buyer.username} has been {status}.')
     return redirect('accounts:manage_buyers')
+
+
+@login_required
+@seller_required
+def delete_buyer(request, buyer_id):
+    buyer = get_object_or_404(User, id=buyer_id, role='BUYER')
+    if request.method == 'POST':
+        name = buyer.real_name or buyer.username or buyer.email
+        buyer.delete()
+        messages.success(request, f"Guest '{name}' has been deleted.")
+    return redirect('accounts:manage_buyers')
