@@ -108,23 +108,19 @@
             <table class="table align-middle mb-0">
               <thead>
                 <tr>
-                  <th style="width:35%; white-space:nowrap;">Time</th>
+                  <th style="width:30%; white-space:nowrap;">Time</th>
                   <th>What happens</th>
                 </tr>
               </thead>
               <tbody>
                 {% for item in schedule_items %}
                 <tr>
-                  <td style="vertical-align:top;">
-                    <div class="fw-semibold">
-                      {% if item.start_time %}{{ item.start_time|date:"g:i A" }}{% if item.end_time %} – {{ item.end_time|date:"g:i A" }}{% endif %}{% elif item.end_time %}{{ item.end_time|date:"g:i A" }}{% else %}—{% endif %}
-                    </div>
-                    {% if item.start_time %}<div class="small" style="color:var(--text-muted);">{{ item.start_time|date:"D, M d" }}</div>{% endif %}
+                  <td style="vertical-align:top; white-space:nowrap;" class="fw-semibold">
+                    {% if item.start_time %}{{ item.start_time|date:"H.i" }}{% if item.end_time %} – {{ item.end_time|date:"H.i" }}{% endif %}{% elif item.end_time %}{{ item.end_time|date:"H.i" }}{% else %}—{% endif %}
                   </td>
                   <td style="vertical-align:top;">
-                    <div class="fw-bold">{{ item.title }}</div>
+                    {{ item.title }}
                     {% if item.location %}<div class="small" style="color:var(--text-muted);"><i class="fas fa-map-marker-alt me-1"></i>{{ item.location }}</div>{% endif %}
-                    {% if item.description %}<div class="small mt-1" style="white-space:normal; overflow-wrap:anywhere;">{{ item.description }}</div>{% endif %}
                   </td>
                 </tr>
                 {% endfor %}
