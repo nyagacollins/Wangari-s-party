@@ -1,6 +1,7 @@
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import os
 
 # -----------------------------
 # BASE DIRECTORY
@@ -153,6 +154,12 @@ STORAGES = {
 # -----------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Use Vercel Blob for media uploads when token is available (serverless/prod)
+if config('BLOB_READ_WRITE_TOKEN', default='') or os.environ.get('BLOB_READ_WRITE_TOKEN'):
+    STORAGES['default'] = {
+        'BACKEND': 'config.storage_backends.VercelBlobStorage',
+    }
 
 # -----------------------------
 # DEFAULT PK FIELD TYPE
