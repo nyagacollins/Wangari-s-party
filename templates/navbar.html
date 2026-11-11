@@ -1,9 +1,9 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{% if user.is_authenticated %}{% url 'accounts:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}">
+    <div class="container px-3">
+        <a class="navbar-brand d-flex align-items-center gap-2 text-truncate" style="max-width: calc(100% - 60px);" href="{% if user.is_authenticated %}{% url 'accounts:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}">
             <span>🎂</span>
-            <span>Wangari's Birthday</span>
+            <span class="text-truncate">Wangari's Birthday</span>
         </a>
         {% if user.is_authenticated %}
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -18,6 +18,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'accounts:register_buyer' %}"><i class="fas fa-user-plus me-2"></i>Add Guest</a></li>
                                 <li><a class="dropdown-item" href="{% url 'accounts:manage_buyers' %}"><i class="fas fa-users-cog me-2"></i>Manage Guests</a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:scan_tickets' %}"><i class="fas fa-qrcode me-2"></i>Scan Tickets</a></li>
                             </ul>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="/admin/products/event/"><i class="fas fa-map-marker-alt me-1"></i>Event & Location</a></li>
