@@ -14,4 +14,5 @@ urlpatterns = [
     path('delete-buyer/<int:buyer_id>/', views.delete_buyer, name='delete_buyer'),
     path('update-location/', views.update_my_location, name='update_my_location'),
     path('scan-ticket/<str:ticket_code>/', views.scan_ticket, name='scan_ticket'),
+    path('scan-tickets/', views.scan_tickets_page, name='scan_tickets'),
 ]

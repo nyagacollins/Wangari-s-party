@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from urllib.parse import quote, urlsplit, urlunsplit
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -38,8 +39,12 @@ def _load_static_items(json_rel_path, default_items, static_subdir, default_titl
     items = default_items
     try:
         if config_path.exists():
-            with config_path.open('r', encoding='utf-8') as f:
-                data = json.load(f)
+            try:
+                with config_path.open('r', encoding='utf-8-sig') as f:
+                    data = json.load(f)
+            except Exception:
+                with config_path.open('r', encoding='utf-8') as f:
+                    data = json.load(f)
             if isinstance(data, list) and data:
                 items = data
     except Exception:
@@ -62,15 +67,27 @@ def _load_static_items(json_rel_path, default_items, static_subdir, default_titl
             item['image_url'] = item['image_url'] or item['image']
             item['image'] = ''
         if item['image_url']:
-            item['display_src'] = item['image_url']
+            src = item['image_url']
         elif item['image']:
             name = item['image'].lstrip('/\\')
             if name.lower().startswith('static/'):
                 name = name[7:].lstrip('/\\')
             if '/' in name or '\\' in name:
-                item['display_src'] = f"/static/{name.replace('\\', '/')}"
+                src = f"/static/{name.replace('\\', '/')}"
             else:
-                item['display_src'] = f"/static/{static_subdir}/{name}"
+                src = f"/static/{static_subdir}/{name}"
+        else:
+            src = ''
+        if src:
+            try:
+                parts = urlsplit(src)
+                if parts.scheme or parts.netloc:
+                    src = urlunsplit((parts.scheme, parts.netloc, quote(parts.path, safe='/@:+'), parts.query, parts.fragment))
+                else:
+                    src = quote(src, safe='/:@+%')
+            except Exception:
+                src = src.replace(' ', '%20')
+        item['display_src'] = src
         normalized.append(item)
     return normalized or default_items
 
@@ -260,3 +277,10 @@ def delete_buyer(request, buyer_id):
 def scan_ticket(request, ticket_code):
     guest = get_object_or_404(User, ticket_code=ticket_code, role='BUYER')
     return render(request, 'accounts/scan_ticket.html', {'guest': guest})
+
+
+@login_required
+@seller_required
+def scan_tickets_page(request):
+    """Admin page with camera scanner for guest QR tickets."""
+    return render(request, 'accounts/scan_tickets.html')

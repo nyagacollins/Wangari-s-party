@@ -77,14 +77,14 @@
         {% endif %}
       </div>
     </div>
-    <div class="card">
+    <div class="card h-100 mb-4 mb-lg-0">
       <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Good to Know</h5></div>
       <div class="card-body">
-        <ul class="list-unstyled mb-0">
+        <ul class="mb-0 ps-3" style="line-height:1.6;">
           <li class="mb-3"><i class="fas fa-check-circle me-2" style="color:var(--success);"></i>You're warmly invited to celebrate with us.</li>
           <li class="mb-3"><i class="fas fa-gift me-2" style="color:var(--primary);"></i>Check out the wishlist below for gift ideas.</li>
           <li class="mb-3"><i class="fas fa-tshirt me-2" style="color:var(--rose);"></i>See outfit inspiration to match the vibe.</li>
-          <li><i class="fas fa-heart me-2" style="color:var(--danger);"></i>We can't wait to celebrate with you!</li>
+          <li class="mb-0"><i class="fas fa-heart me-2" style="color:var(--danger);"></i>We can't wait to celebrate with you!</li>
         </ul>
       </div>
     </div>
@@ -153,11 +153,11 @@
           <div class="col-sm-6 col-lg-4 col-xl-3">
             <div class="card h-100 border-0" style="background:var(--light-bg);">
               {% if item.display_src %}<img src="{{ item.display_src }}" class="card-img-top" alt="{{ item.title }}" style="height:180px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
-              <div class="card-body">
-                {% if not item.display_src %}<div style="font-size:2rem;">{{ item.emoji|default:"🎁" }}</div>{% endif %}
-                <h6 class="fw-bold mb-1 mt-2">{{ item.title }}</h6>
-                {% if item.description %}<p class="small mb-2" style="color:var(--text-muted);">{{ item.description }}</p>{% endif %}
-                {% if item.link %}<a href="{{ item.link }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">View item</a>{% endif %}
+              <div class="card-body d-flex flex-column">
+                {% if not idea.display_src %}<div style="font-size:2rem;">{{ idea.emoji|default:"👗" }}</div>{% endif %}
+                <h6 class="fw-bold mb-1 mt-2 text-break" style="overflow-wrap:anywhere;">{{ idea.title }}</h6>
+                {% if idea.description %}<p class="small mb-0 text-break" style="color:var(--text-muted); overflow-wrap:anywhere; white-space:normal;">{{ idea.description }}</p>{% endif %}
+                {% if idea.link %}<a href="{{ idea.link }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2 align-self-start">View</a>{% endif %}
               </div>
             </div>
           </div>

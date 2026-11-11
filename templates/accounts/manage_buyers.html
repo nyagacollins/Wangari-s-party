@@ -10,7 +10,10 @@
         <h2 style="font-family:'Playfair Display',serif;"><i class="fas fa-users me-2" style="color:var(--primary);"></i>Manage Guests</h2>
         <p style="color:var(--text-muted);">Guests invited to Wangari's birthday (scan tickets at entrance)</p>
       </div>
-      <a href="{% url 'accounts:register_buyer' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Guest</a>
+      <div class="d-flex gap-2">
+        <a href="{% url 'accounts:scan_tickets' %}" class="btn btn-dark"><i class="fas fa-qrcode me-2"></i>Scan Tickets</a>
+        <a href="{% url 'accounts:register_buyer' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Guest</a>
+      </div>
     </div>
   </div>
 </div>
