@@ -9,11 +9,13 @@ logger = logging.getLogger(__name__)
 
 def send_credentials_email(user, password):
     subject = "Your Invitation & Login Details - Wangari's Birthday"
-    login_url = f"{settings.SITE_URL.rstrip('/')}/accounts/login/" if getattr(settings, 'SITE_URL', '') else '/accounts/login/'
+    site = getattr(settings, 'SITE_URL', '') or 'https://wangari.site'
+    login_url = f"{site.rstrip('/')}/accounts/login/"
     context = {
         'user': user,
         'password': password,
         'login_url': login_url,
+        'site_url': site.rstrip('/'),
         'name': user.real_name or user.username,
     }
     html_message = render_to_string('emails/credentials_email.html', context)

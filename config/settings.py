@@ -14,9 +14,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # ALLOWED_HOSTS
-ALLOWED_HOSTS = [h.strip() for h in config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,.onrender.com,.vercel.app').split(',') if h.strip()]
+ALLOWED_HOSTS = [h.strip() for h in config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,.onrender.com,.vercel.app,wangari.site,www.wangari.site').split(',') if h.strip()]
 # Allow common tunnel/deploy subdomains automatically
-ALLOWED_HOSTS += ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.io', '.vercel.app', '.onrender.com']
+ALLOWED_HOSTS += ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.io', '.vercel.app', '.onrender.com', 'wangari.site', 'www.wangari.site']
 
 # -----------------------------
 # DATABASE
@@ -201,6 +201,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok.io',
     'https://*.vercel.app',
     'https://*.onrender.com',
+    'https://wangari.site',
+    'https://www.wangari.site',
 ]
 # Also add the exact callback/SITE_URL origins if set
 for _u in (_callback_url, config('SITE_URL', default='')):
