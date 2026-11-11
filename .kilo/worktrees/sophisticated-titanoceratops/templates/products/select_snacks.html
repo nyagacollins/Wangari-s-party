@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Tickets — Wangari's Birthday{% endblock %}
+
+{% block extra_css %}
+<style>
+.ticket-card { cursor: default; }
+.qty-input {
+    height: 60px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    border: 2px solid rgba(192,132,252,0.25);
+    border-radius: 12px;
+}
+.qty-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(181,123,238,0.15);
+}
+.subtotal-box {
+    background: var(--grad-primary);
+    border-radius: 14px;
+    padding: 1rem;
+    color: #fff;
+}
+.order-summary-box {
+    background: var(--grad-primary);
+    border-radius: var(--radius-lg);
+    color: #fff;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card" style="background:var(--grad-primary);">
+            <div class="card-body text-center py-4">
+                <span style="font-size:3rem;">🎟️</span>
+                <h1 class="display-6 fw-bold mt-2 mb-1" style="color:#fff; font-family:'Playfair Display',serif;">Select Your Tickets</h1>
+                <p class="lead mb-0" style="color:rgba(255,255,255,0.85);">Choose your invitation type for Wangari's birthday celebration</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="post" id="ticket-form">
+    {% csrf_token %}
+    <div class="row g-4 mb-4">
+
+        <!-- Regular Ticket -->
+        <div class="col-lg-6">
+            <div class="card snack-card ticket-card h-100">
+                <div class="card-body text-center p-4">
+                    <div style="font-size:4rem;" class="mb-3">🎟️</div>
+                    <h3 class="fw-bold mb-2">Regular Ticket</h3>
+                    <p style="color:var(--text-muted);" class="mb-3">{{ regular.description|default:"Standard entry to the birthday celebration" }}</p>
+                    <div class="price-tag mb-4">KSh {{ regular.price }} per ticket</div>
+
+                    <div class="mb-4">
+                        <label for="id_regular_quantity" class="form-label fw-bold">How many tickets?</label>
+                        <input type="number"
+                               class="form-control qty-input"
+                               id="id_regular_quantity"
+                               name="regular_quantity"
+                               min="0" max="10" value="0">
+                        <small style="color:var(--text-muted);">Maximum: 10 tickets</small>
+                    </div>
+
+                    <div class="subtotal-box">
+                        <div class="fw-bold small mb-1">SUBTOTAL</div>
+                        <div class="fs-4 fw-bold" id="regular-subtotal">KSh 0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP Ticket -->
+        <div class="col-lg-6">
+            <div class="card snack-card ticket-card h-100">
+                <div class="card-body text-center p-4">
+                    <div style="font-size:4rem;" class="mb-3">👑</div>
+                    <h3 class="fw-bold mb-2">VIP Ticket</h3>
+                    <p style="color:var(--text-muted);" class="mb-3">{{ vip.description|default:"VIP entry with exclusive perks & front-row access" }}</p>
+                    <div class="price-tag mb-4">KSh {{ vip.price }} per ticket</div>
+
+                    <div class="mb-4">
+                        <label for="id_vip_quantity" class="form-label fw-bold">How many tickets?</label>
+                        <input type="number"
+                               class="form-control qty-input"
+                               id="id_vip_quantity"
+                               name="vip_quantity"
+                               min="0" max="10" value="0">
+                        <small style="color:var(--text-muted);">Maximum: 10 tickets</small>
+                    </div>
+
+                    <div class="subtotal-box">
+                        <div class="fw-bold small mb-1">SUBTOTAL</div>
+                        <div class="fs-4 fw-bold" id="vip-subtotal">KSh 0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 order-summary-box">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h5 class="fw-bold mb-3" style="color:#fff;">
+                                <i class="fas fa-receipt me-2"></i>Order Summary
+                            </h5>
+                            <div id="summary-content" style="color:rgba(255,255,255,0.85);">
+                                <p class="mb-0">Select tickets above to see your order summary</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 text-lg-end text-center mt-3 mt-lg-0">
+                            <div class="mb-3">
+                                <div class="small" style="color:rgba(255,255,255,0.75);">TOTAL AMOUNT</div>
+                                <div class="display-5 fw-bold" id="total-amount" style="color:#fff;">KSh 0.00</div>
+                            </div>
+                            <button type="submit"
+                                    class="btn btn-light btn-lg px-4 py-3 fw-bold"
+                                    id="proceed-btn"
+                                    disabled
+                                    style="color:var(--primary);">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const regularInput = document.getElementById('id_regular_quantity');
+    const vipInput = document.getElementById('id_vip_quantity');
+    const regularPrice = {{ regular.price }};
+    const vipPrice = {{ vip.price }};
+
+    function update() {
+        const rQty = parseInt(regularInput.value) || 0;
+        const vQty = parseInt(vipInput.value) || 0;
+        const rTotal = rQty * regularPrice;
+        const vTotal = vQty * vipPrice;
+        const grand = rTotal + vTotal;
+
+        document.getElementById('regular-subtotal').textContent = 'KSh ' + rTotal.toFixed(2);
+        document.getElementById('vip-subtotal').textContent = 'KSh ' + vTotal.toFixed(2);
+        document.getElementById('total-amount').textContent = 'KSh ' + grand.toFixed(2);
+
+        const btn = document.getElementById('proceed-btn');
+        btn.disabled = grand === 0;
+
+        let summary = '';
+        if (rQty > 0) summary += `<div>🎟️ ${rQty} Regular × KSh ${regularPrice} = <strong>KSh ${rTotal.toFixed(2)}</strong></div>`;
+        if (vQty > 0) summary += `<div>👑 ${vQty} VIP × KSh ${vipPrice} = <strong>KSh ${vTotal.toFixed(2)}</strong></div>`;
+        document.getElementById('summary-content').innerHTML = summary || '<p class="mb-0">Select tickets above to see your order summary</p>';
+    }
+
+    regularInput.addEventListener('input', update);
+    vipInput.addEventListener('input', update);
+    update();
+});
+</script>
+{% endblock %}

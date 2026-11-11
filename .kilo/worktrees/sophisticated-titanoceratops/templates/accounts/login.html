@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Login — Wangari's Birthday 🎂{% endblock %}
+
+{% block extra_css %}
+<style>
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.brand-section {
+    background: var(--grad-primary);
+    color: #fff;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.brand-section::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 65%);
+    animation: float 8s ease-in-out infinite;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrap">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card border-0" style="border-radius:var(--radius-lg); overflow:hidden;">
+                    <div class="row g-0">
+
+                        <!-- Brand side -->
+                        <div class="col-lg-6">
+                            <div class="brand-section h-100 d-flex flex-column justify-content-center">
+                                <div style="font-size:4.5rem;" class="sparkle mb-3">🎂</div>
+                                <h2 class="fw-bold mb-2" style="font-family:'Playfair Display',serif;">Wangari's Birthday</h2>
+                                <p class="lead mb-4" style="color:rgba(255,255,255,0.85);">Secure your invitation & celebrate with us!</p>
+                                <div class="row text-center g-3">
+                                    <div class="col-6">
+                                        <div style="background:rgba(255,255,255,0.15); border-radius:14px; padding:1rem;">
+                                            <div style="font-size:2rem;">🎟️</div>
+                                            <small>Regular Ticket</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div style="background:rgba(255,255,255,0.15); border-radius:14px; padding:1rem;">
+                                            <div style="font-size:2rem;">👑</div>
+                                            <small>VIP Ticket</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Login form -->
+                        <div class="col-lg-6">
+                            <div class="p-5">
+                                <div class="text-center mb-4">
+                                    <h3 class="fw-bold" style="font-family:'Playfair Display',serif;">Welcome Back! ✨</h3>
+                                    <p style="color:var(--text-muted);">Sign in to get your invitation</p>
+                                </div>
+
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                                            <i class="fas fa-user me-2" style="color:var(--primary);"></i>Username
+                                        </label>
+                                        <input type="text"
+                                               class="form-control form-control-lg"
+                                               id="{{ form.username.id_for_label }}"
+                                               name="username"
+                                               placeholder="Enter your username"
+                                               required>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                                            <i class="fas fa-lock me-2" style="color:var(--primary);"></i>Password
+                                        </label>
+                                        <input type="password"
+                                               class="form-control form-control-lg"
+                                               id="{{ form.password.id_for_label }}"
+                                               name="password"
+                                               placeholder="Enter your password"
+                                               required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                                    </button>
+                                </form>
+
+                                <div class="text-center">
+                                    <div class="p-3 rounded-3" style="background:var(--primary-light);">
+                                        <small style="color:var(--text-muted);">
+                                            <i class="fas fa-info-circle me-1" style="color:var(--primary);"></i>
+                                            Don't have an account? Contact the organiser to register.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

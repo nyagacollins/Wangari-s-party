@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update {{ product.get_name_display }} Ticket Price{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 style="font-family:'Playfair Display',serif;">
+            {% if product.name == 'REGULAR' %}🎟️{% else %}👑{% endif %}
+            Update {{ product.get_name_display }} Ticket Price
+        </h2>
+        <p style="color:var(--text-muted);">Current price: KSh {{ product.price }}</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Price Update Info</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-3">
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Price changes apply immediately</li>
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>All future purchases use the new price</li>
+                    <li><i class="fas fa-check me-2" style="color:var(--success);"></i>Existing transactions remain unchanged</li>
+                </ul>
+                <hr style="border-color:rgba(192,132,252,0.15);">
+                <p class="mb-1"><strong>Ticket:</strong> {{ product.get_name_display }}</p>
+                <p class="mb-1"><strong>Current Price:</strong> KSh {{ product.price }}</p>
+                <p class="mb-0"><strong>Status:</strong>
+                    {% if product.is_available %}
+                        <span class="badge ms-1" style="background:var(--success);">Available</span>
+                    {% else %}
+                        <span class="badge ms-1" style="background:var(--danger);">Unavailable</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

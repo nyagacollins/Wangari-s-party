@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add Guest — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <h2 style="font-family:'Playfair Display',serif;"><i class="fas fa-user-plus me-2" style="color:var(--primary);"></i>Add New Guest</h2>
+    <p style="color:var(--text-muted);">Create a guest account and send their login credentials by email.</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body">
+        {% crispy form %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header"><h6 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>How it works</h6></div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Enter guest email and name</li>
+          <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>A login account is created with a temporary password</li>
+          <li class="mb-2"><i class="fas fa-envelope me-2" style="color:var(--primary);"></i>Credentials are emailed to the guest</li>
+          <li><i class="fas fa-key me-2" style="color:var(--warning);"></i>Guest must change password on first login to view their invitation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

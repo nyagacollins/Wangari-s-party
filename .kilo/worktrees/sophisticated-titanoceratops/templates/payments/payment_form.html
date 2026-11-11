@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Payment — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card" style="background:var(--grad-primary);">
+            <div class="card-body text-center py-4">
+                <span style="font-size:3rem;">💳</span>
+                <h1 class="display-6 fw-bold mt-2 mb-1" style="color:#fff; font-family:'Playfair Display',serif;">Complete Your Payment</h1>
+                <p class="lead mb-0" style="color:rgba(255,255,255,0.85);">Secure M-Pesa payment — confirm your invitation</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Order Summary -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-receipt me-2" style="color:var(--primary);"></i>Order Summary</h5>
+            </div>
+            <div class="card-body">
+                {% with d=consumption_data %}
+                {% if d.regular_quantity and d.regular_quantity > 0 %}
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-3" style="background:var(--primary-light);">
+                    <span>🎟️ {{ d.regular_quantity }} Regular Ticket{{ d.regular_quantity|pluralize }}</span>
+                    <strong>KSh {% widthratio d.regular_quantity 1 d.regular_price %}</strong>
+                </div>
+                {% endif %}
+                {% if d.vip_quantity and d.vip_quantity > 0 %}
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-3" style="background:var(--rose-light);">
+                    <span>👑 {{ d.vip_quantity }} VIP Ticket{{ d.vip_quantity|pluralize }}</span>
+                    <strong>KSh {% widthratio d.vip_quantity 1 d.vip_price %}</strong>
+                </div>
+                {% endif %}
+                <!-- fallback for old session keys -->
+                {% if d.mandazi_quantity and d.mandazi_quantity > 0 and not d.regular_quantity %}
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-3" style="background:var(--primary-light);">
+                    <span>🎟️ {{ d.mandazi_quantity }} Regular Ticket{{ d.mandazi_quantity|pluralize }}</span>
+                    <strong>KSh {% widthratio d.mandazi_quantity 1 d.mandazi_price %}</strong>
+                </div>
+                {% endif %}
+                {% if d.eggs_quantity and d.eggs_quantity > 0 and not d.vip_quantity %}
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-3" style="background:var(--rose-light);">
+                    <span>👑 {{ d.eggs_quantity }} VIP Ticket{{ d.eggs_quantity|pluralize }}</span>
+                    <strong>KSh {% widthratio d.eggs_quantity 1 d.eggs_price %}</strong>
+                </div>
+                {% endif %}
+                <hr style="border-color:rgba(192,132,252,0.15);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Total:</h5>
+                    <h5 class="mb-0" style="color:var(--primary);">KSh {{ d.total_amount }}</h5>
+                </div>
+                {% endwith %}
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="fas fa-mobile-alt me-2" style="color:var(--success);"></i>M-Pesa Payment</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-1"><i class="fas fa-check me-2" style="color:var(--success);"></i>Secure payment via Safaricom M-Pesa</li>
+                    <li class="mb-1"><i class="fas fa-check me-2" style="color:var(--success);"></i>Instant confirmation</li>
+                    <li><i class="fas fa-check me-2" style="color:var(--success);"></i>SMS receipt to your phone</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-mobile-alt me-2" style="color:var(--success);"></i>Pay via M-Pesa</h5>
+            </div>
+            <div class="card-body p-4">
+                <form id="payment-form">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="phone-number" class="form-label">
+                            <i class="fas fa-phone me-2" style="color:var(--primary);"></i>Phone Number
+                        </label>
+                        <input type="tel"
+                               class="form-control form-control-lg"
+                               id="phone-number"
+                               name="phone_number"
+                               value="{{ user_phone }}"
+                               placeholder="+254712345678"
+                               required>
+                        <div class="form-text"><i class="fas fa-shield-alt me-1" style="color:var(--success);"></i>Your M-Pesa registered number</div>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-primary btn-lg py-3" id="submit-payment">
+                            <i class="fas fa-paper-plane me-2"></i>Send Payment Request
+                        </button>
+                        <a href="{% url 'products:select_snacks' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Tickets
+                        </a>
+                    </div>
+                </form>
+
+                <div id="payment-status" class="mt-4 text-center" style="display:none;">
+                    <div class="p-4 rounded-3" style="background:var(--primary-light);">
+                        <div class="spinner-border mb-3" style="color:var(--primary);" role="status" id="loading-spinner">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="fw-bold mb-2" style="color:var(--primary);" id="status-message">Processing payment...</p>
+                        <small style="color:var(--text-muted);" id="status-subtitle">Check your phone for M-Pesa prompt</small>
+
+                        <div id="manual-section" class="mt-4" style="display:none;">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-mobile-alt me-2"></i>Already paid via M-Pesa?</h6>
+                                <p class="mb-2">If you've entered your PIN and received a confirmation SMS, click below:</p>
+                                <a href="#" class="btn btn-warning" id="manual-confirm-btn">
+                                    <i class="fas fa-check-circle me-2"></i>I've Completed Payment
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 style="color:var(--primary);"><i class="fas fa-lightbulb me-2"></i>Payment Steps</h6>
+                <ol class="mb-0" style="color:var(--text-muted);">
+                    <li>Click "Send Payment Request"</li>
+                    <li>Check your phone for M-Pesa prompt</li>
+                    <li>Enter your M-Pesa PIN</li>
+                    <li>Wait for confirmation ✨</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/payment.js' %}"></script>
+{% endblock %}

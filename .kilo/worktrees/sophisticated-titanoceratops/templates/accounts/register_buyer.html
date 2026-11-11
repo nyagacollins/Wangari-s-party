@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register Guest — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 style="font-family:'Playfair Display',serif;"><i class="fas fa-user-plus me-2" style="color:var(--primary);"></i>Register New Guest</h2>
+        <p style="color:var(--text-muted);">Add a new guest to Wangari's birthday invitation system</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Registration Info</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Username must be unique</li>
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Email for notifications</li>
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Phone number for M-Pesa payments</li>
+                    <li><i class="fas fa-check me-2" style="color:var(--success);"></i>Password must be at least 8 characters</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

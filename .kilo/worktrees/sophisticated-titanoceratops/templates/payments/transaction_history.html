@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment History — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 style="font-family:'Playfair Display',serif;"><i class="fas fa-receipt me-2" style="color:var(--primary);"></i>Payment History</h2>
+        <p style="color:var(--text-muted);">Your M-Pesa payment records for Wangari's birthday invitations</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if transactions %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Phone</th>
+                                <th>M-Pesa Receipt</th>
+                                <th>Status</th>
+                                <th>Tickets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in transactions %}
+                            <tr>
+                                <td>{{ t.created_at|date:"M d, Y H:i" }}</td>
+                                <td><strong>KSh {{ t.amount }}</strong></td>
+                                <td>{{ t.phone_number }}</td>
+                                <td>
+                                    {% if t.mpesa_receipt_number %}
+                                        <code style="color:var(--primary);">{{ t.mpesa_receipt_number }}</code>
+                                    {% else %}
+                                        <span style="color:var(--text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if t.status == 'SUCCESS' %}
+                                        <span class="badge" style="background:var(--success);">Paid ✓</span>
+                                    {% elif t.status == 'FAILED' %}
+                                        <span class="badge" style="background:var(--danger);">Failed</span>
+                                    {% else %}
+                                        <span class="badge" style="background:var(--warning); color:var(--dark);">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>
+                                        {% if t.consumption.mandazi_quantity > 0 %}
+                                            🎟️ {{ t.consumption.mandazi_quantity }} Regular
+                                        {% endif %}
+                                        {% if t.consumption.eggs_quantity > 0 %}
+                                            {% if t.consumption.mandazi_quantity > 0 %} · {% endif %}
+                                            👑 {{ t.consumption.eggs_quantity }} VIP
+                                        {% endif %}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <span style="font-size:3rem;">🎟️</span>
+                    <h5 class="mt-3">No Payments Yet</h5>
+                    <p style="color:var(--text-muted);">Your payment history will appear here after you purchase tickets.</p>
+                    <a href="{% url 'products:select_snacks' %}" class="btn btn-primary mt-2">
+                        <i class="fas fa-ticket-alt me-2"></i>Get Your Tickets
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card" style="background:linear-gradient(135deg,#6dbf9e,#4aab87);">
+            <div class="card-body text-center py-5">
+                <div style="font-size:5rem;" class="sparkle">🎉</div>
+                <h1 class="display-6 fw-bold mt-3 mb-2" style="color:#fff; font-family:'Playfair Display',serif;">You're In!</h1>
+                <p class="lead mb-0" style="color:rgba(255,255,255,0.9);">Your invitation has been confirmed. See you at the party! 🎂</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4 class="mb-0"><i class="fas fa-receipt me-2" style="color:var(--primary);"></i>Payment Receipt</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3" style="background:var(--primary-light);">
+                            <small style="color:var(--text-muted);">Transaction ID</small>
+                            <div class="fw-bold">#{{ transaction.id }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3" style="background:var(--primary-light);">
+                            <small style="color:var(--text-muted);">Amount Paid</small>
+                            <div class="fw-bold" style="color:var(--primary);">KSh {{ transaction.amount }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3" style="background:var(--rose-light);">
+                            <small style="color:var(--text-muted);">Phone Number</small>
+                            <div class="fw-bold">{{ transaction.phone_number }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3" style="background:var(--rose-light);">
+                            <small style="color:var(--text-muted);">Date</small>
+                            <div class="fw-bold">{{ transaction.created_at|date:"M d, Y H:i" }}</div>
+                        </div>
+                    </div>
+                    {% if transaction.mpesa_receipt_number %}
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background:rgba(109,191,158,0.12);">
+                            <small style="color:var(--text-muted);">M-Pesa Receipt</small>
+                            <div class="fw-bold" style="color:var(--success);">{{ transaction.mpesa_receipt_number }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <hr style="border-color:rgba(192,132,252,0.15);" class="my-4">
+
+                <h6 class="mb-3">Tickets Purchased:</h6>
+                <div class="row g-2">
+                    {% if transaction.consumption.mandazi_quantity > 0 %}
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background:var(--primary-light);">
+                            <span>🎟️ {{ transaction.consumption.mandazi_quantity }} Regular Ticket{{ transaction.consumption.mandazi_quantity|pluralize }}</span>
+                            <strong>KSh {% widthratio transaction.consumption.mandazi_quantity 1 transaction.consumption.mandazi_price %}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if transaction.consumption.eggs_quantity > 0 %}
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background:var(--rose-light);">
+                            <span>👑 {{ transaction.consumption.eggs_quantity }} VIP Ticket{{ transaction.consumption.eggs_quantity|pluralize }}</span>
+                            <strong>KSh {% widthratio transaction.consumption.eggs_quantity 1 transaction.consumption.eggs_price %}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>Back to Dashboard
+            </a>
+            <a href="{% url 'products:select_snacks' %}" class="btn btn-outline-primary">
+                <i class="fas fa-ticket-alt me-2"></i>Buy More Tickets
+            </a>
+            <a href="{% url 'payments:transaction_history' %}" class="btn btn-info">
+                <i class="fas fa-history me-2"></i>View History
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card text-center" style="background:var(--grad-primary);">
+            <div class="card-body py-4">
+                <h5 class="mb-2" style="color:#fff; font-family:'Playfair Display',serif;">
+                    🎂 Thank You! See You at the Party! 🎂
+                </h5>
+                <p class="mb-0" style="color:rgba(255,255,255,0.85);">
+                    Wangari can't wait to celebrate with you. It's going to be amazing! ✨
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

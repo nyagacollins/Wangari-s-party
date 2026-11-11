@@ -1,0 +1,108 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'accounts:dashboard' %}">
+            <span class="sparkle">🎂</span>
+            <span>Wangari's Birthday</span>
+        </a>
+
+        {% if user.is_authenticated %}
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:dashboard' %}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+
+                    {% if user.is_seller %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-users me-1"></i>Guests
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'accounts:register_buyer' %}">
+                                    <i class="fas fa-user-plus me-2" style="color:var(--primary);"></i>Register Guest
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:manage_buyers' %}">
+                                    <i class="fas fa-users-cog me-2" style="color:var(--primary);"></i>Manage Guests
+                                </a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'products:manage_products' %}">
+                                <i class="fas fa-ticket-alt me-1"></i>Tickets
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-chart-line me-1"></i>Reports
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'reports:daily_sales' %}">
+                                    <i class="fas fa-calendar-day me-2" style="color:var(--primary);"></i>Daily Sales
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'reports:all_transactions' %}">
+                                    <i class="fas fa-list me-2" style="color:var(--primary);"></i>All Transactions
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user.is_buyer %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'products:select_snacks' %}">
+                                <i class="fas fa-ticket-alt me-1"></i>Get Tickets
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-clock me-1"></i>History
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'payments:transaction_history' %}">
+                                    <i class="fas fa-receipt me-2" style="color:var(--primary);"></i>Transactions
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'payments:consumption_history' %}">
+                                    <i class="fas fa-history me-2" style="color:var(--primary);"></i>My Orders
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                            <span style="width:32px;height:32px;border-radius:50%;background:var(--grad-primary);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;font-weight:700;">
+                                {{ user.username|first|upper }}
+                            </span>
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header" style="color:var(--text-muted);">{{ user.get_role_display }}</h6></li>
+                            <li><hr class="dropdown-divider" style="border-color:rgba(192,132,252,0.2);"></li>
+                            {% if user.is_buyer %}
+                                <li><a class="dropdown-item" href="{% url 'accounts:update_phone' %}">
+                                    <i class="fas fa-phone me-2" style="color:var(--primary);"></i>Update Phone
+                                </a></li>
+                                <li><hr class="dropdown-divider" style="border-color:rgba(192,132,252,0.2);"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2" style="color:var(--danger);"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</nav>

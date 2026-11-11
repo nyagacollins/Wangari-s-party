@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Phone — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 style="font-family:'Playfair Display',serif;"><i class="fas fa-phone me-2" style="color:var(--primary);"></i>Update Phone Number</h2>
+        <p style="color:var(--text-muted);">Update your M-Pesa number for ticket payments</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Important</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Use the number registered with M-Pesa</li>
+                    <li class="mb-2"><i class="fas fa-check me-2" style="color:var(--success);"></i>Format: +254712345678</li>
+                    <li><i class="fas fa-check me-2" style="color:var(--success);"></i>This number will receive the payment prompt</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

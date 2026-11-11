@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Invitation — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card" style="background: var(--grad-primary);">
+      <div class="card-body text-center py-5">
+        <div style="font-size:4rem;">🎉</div>
+        <h1 class="display-6 fw-bold mt-2 mb-2" style="color:#fff; font-family:'Playfair Display',serif;">You're Invited, {{ user.real_name|default:user.username }}!</h1>
+        <p class="lead mb-0" style="color:rgba(255,255,255,0.9);">Welcome to Wangari's birthday celebration</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-envelope-open-text me-2" style="color:var(--primary);"></i>Invitation</h5></div>
+      <div class="card-body p-4">
+        <p class="lead mb-3" style="font-family:'Playfair Display',serif;">
+          Dear <strong>{{ user.real_name|default:user.username }}</strong>,
+        </p>
+        <p>We are delighted to invite you to join us in celebrating <strong>{% if event %}{{ event.title }}{% else %}Wangari's Birthday{% endif %}</strong>.</p>
+        <div class="p-3 rounded-3 mb-3" style="background:var(--primary-light);">
+          <div class="mb-2"><i class="fas fa-user me-2" style="color:var(--primary);"></i><strong>Guest:</strong> {{ user.real_name|default:user.username }}</div>
+          <div class="mb-2"><i class="fas fa-envelope me-2" style="color:var(--primary);"></i><strong>Email:</strong> {{ user.email }}</div>
+          <div><i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i><strong>Your Location:</strong> {{ user.location|default:"Not specified" }}</div>
+        </div>
+
+        {% if event %}
+        <div class="p-3 rounded-3 mb-3" style="background:rgba(109,191,158,0.12);">
+          <h6 class="fw-bold mb-2"><i class="fas fa-calendar-alt me-2"></i>Event Details</h6>
+          {% if event.venue %}<p class="mb-1"><strong>Venue/Location:</strong> {{ event.venue }}</p>{% endif %}
+          {% if event.event_date %}<p class="mb-1"><strong>Date & Time:</strong> {{ event.event_date|date:"l, M d, Y — g:i A" }}</p>{% endif %}
+          {% if event.description %}<p class="mb-1">{{ event.description|linebreaksbr }}</p>{% endif %}
+        </div>
+        {% if event.schedule %}
+        <div class="p-3 rounded-3 mb-3" style="background:rgba(137,180,232,0.12);">
+          <h6 class="fw-bold mb-2"><i class="fas fa-clock me-2"></i>Schedule</h6>
+          <div>{{ event.schedule|linebreaks }}</div>
+        </div>
+        {% endif %}
+        {% if event.additional_info %}
+        <div class="p-3 rounded-3" style="background:rgba(240,195,109,0.12);">
+          <h6 class="fw-bold mb-2"><i class="fas fa-info-circle me-2"></i>Additional Information</h6>
+          <div>{{ event.additional_info|linebreaks }}</div>
+        </div>
+        {% endif %}
+        {% else %}
+        <p style="color:var(--text-muted);">Event details will be shared here soon.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Good to Know</h5></div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          <li class="mb-3"><i class="fas fa-check-circle me-2" style="color:var(--success);"></i>You're warmly invited to celebrate with us.</li>
+          <li class="mb-3"><i class="fas fa-gift me-2" style="color:var(--primary);"></i>Check out the wishlist below for gift ideas.</li>
+          <li class="mb-3"><i class="fas fa-tshirt me-2" style="color:var(--rose);"></i>See outfit inspiration to match the vibe.</li>
+          <li><i class="fas fa-heart me-2" style="color:var(--danger);"></i>We can't wait to celebrate with you!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-gift me-2" style="color:var(--primary);"></i>Wishlist</h5></div>
+      <div class="card-body">
+        {% if wishlist_items %}
+        <div class="row g-3">
+          {% for item in wishlist_items %}
+          <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0" style="background:var(--light-bg);">
+              {% if item.image %}<img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" style="height:180px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
+              <div class="card-body">
+                <h6 class="fw-bold mb-1">{{ item.title }}</h6>
+                {% if item.description %}<p class="small mb-2" style="color:var(--text-muted);">{{ item.description }}</p>{% endif %}
+                {% if item.link %}<a href="{{ item.link }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">View item</a>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="mb-0" style="color:var(--text-muted);">Wishlist items will appear here soon.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-tshirt me-2" style="color:var(--primary);"></i>Outfit Ideas</h5></div>
+      <div class="card-body">
+        {% if outfit_ideas %}
+        <div class="row g-3">
+          {% for idea in outfit_ideas %}
+          <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0" style="background:var(--light-bg);">
+              {% if idea.image %}<img src="{{ idea.image.url }}" class="card-img-top" alt="{{ idea.title }}" style="height:220px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
+              <div class="card-body">
+                <h6 class="fw-bold mb-1">{{ idea.title }}</h6>
+                {% if idea.description %}<p class="small mb-0" style="color:var(--text-muted);">{{ idea.description }}</p>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="mb-0" style="color:var(--text-muted);">Outfit inspiration will appear here soon.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

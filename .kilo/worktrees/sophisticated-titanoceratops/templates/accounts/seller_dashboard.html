@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Organiser Dashboard — Wangari's Birthday{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card" style="background: var(--grad-primary);">
+            <div class="card-body text-center py-5">
+                <span style="font-size:4rem;">👑</span>
+                <h1 class="display-6 fw-bold mt-3 mb-2" style="color:#fff; font-family:'Playfair Display',serif;">Welcome, {{ user.username }}!</h1>
+                <p class="lead mb-0" style="color:rgba(255,255,255,0.85);">Manage Wangari's birthday invitations & payments</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Total Guests</h6>
+                        <h3>{{ user.created_buyers.count }}</h3>
+                        <small style="color:var(--text-muted);">Registered guests</small>
+                    </div>
+                    <i class="fas fa-users fa-3x" style="color:var(--primary-light);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Today's Sales</h6>
+                        <h3>KSh 0</h3>
+                        <small style="color:var(--text-muted);">Revenue today</small>
+                    </div>
+                    <i class="fas fa-chart-line fa-3x" style="color:var(--primary-light);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Pending Payments</h6>
+                        <h3>0</h3>
+                        <small style="color:var(--text-muted);">Awaiting confirmation</small>
+                    </div>
+                    <i class="fas fa-clock fa-3x" style="color:var(--primary-light);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">This Month</h6>
+                        <h3>KSh 0</h3>
+                        <small style="color:var(--text-muted);">Monthly revenue</small>
+                    </div>
+                    <i class="fas fa-calendar-alt fa-3x" style="color:var(--primary-light);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-rocket me-2" style="color:var(--primary);"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{% url 'accounts:register_buyer' %}" class="btn btn-primary w-100 py-3 text-start">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-plus fa-2x me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Register Guest</div>
+                                    <small style="color:rgba(255,255,255,0.75);">Add a new guest</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'products:manage_products' %}" class="btn btn-warning w-100 py-3 text-start">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-ticket-alt fa-2x me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Manage Tickets</div>
+                                    <small style="color:rgba(59,42,74,0.65);">Update ticket prices</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'reports:daily_sales' %}" class="btn btn-info w-100 py-3 text-start">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-bar fa-2x me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Daily Reports</div>
+                                    <small style="color:rgba(255,255,255,0.75);">View sales analytics</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'payments:all_transactions' %}" class="btn btn-success w-100 py-3 text-start">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-list fa-2x me-3"></i>
+                                <div>
+                                    <div class="fw-bold">All Transactions</div>
+                                    <small style="color:rgba(255,255,255,0.75);">View all payments</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'payments:test_stk_push' %}" class="btn btn-outline-primary w-100 py-3 text-start">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-mobile-alt fa-2x me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Test STK Push</div>
+                                    <small style="color:var(--text-muted);">Test M-Pesa integration</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'payments:callback_monitor' %}" class="btn btn-outline-primary w-100 py-3 text-start">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-satellite-dish fa-2x me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Callback Monitor</div>
+                                    <small style="color:var(--text-muted);">Monitor M-Pesa callbacks</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bell me-2" style="color:var(--primary);"></i>System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3 p-3 rounded-3" style="background:rgba(109,191,158,0.12);">
+                    <div class="rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="background:var(--success);width:38px;height:38px;">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold">System Online</div>
+                        <small style="color:var(--text-muted);">All services running</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mb-3 p-3 rounded-3" id="mpesa-status" style="background:var(--primary-light);">
+                    <div class="rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="background:var(--primary);width:38px;height:38px;">
+                        <i class="fas fa-spinner fa-spin text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold">M-Pesa Status</div>
+                        <small style="color:var(--text-muted);">Checking...</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 rounded-3" style="background:rgba(137,180,232,0.12);">
+                    <div class="rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="background:var(--info);width:38px;height:38px;">
+                        <i class="fas fa-info text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold">Ready to Accept</div>
+                        <small style="color:var(--text-muted);">Accepting ticket payments</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/payments/mpesa-status/')
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('mpesa-status');
+            const icon = el.querySelector('i');
+            const circle = el.querySelector('.rounded-circle');
+            const title = el.querySelector('.fw-bold');
+            const desc = el.querySelector('small');
+            icon.classList.remove('fa-spinner','fa-spin');
+            if (data.status === 'test_mode') {
+                icon.classList.add('fa-flask');
+                circle.style.background = 'var(--info)';
+                title.textContent = 'M-Pesa Test Mode';
+                desc.textContent = 'Simulated payments active';
+            } else if (data.status === 'configured') {
+                icon.classList.add('fa-check');
+                circle.style.background = 'var(--success)';
+                el.style.background = 'rgba(109,191,158,0.12)';
+                title.textContent = 'M-Pesa Ready';
+                desc.textContent = 'API configured & working';
+            } else {
+                icon.classList.add('fa-exclamation-triangle');
+                circle.style.background = 'var(--danger)';
+                el.style.background = 'rgba(224,123,138,0.12)';
+                title.textContent = 'M-Pesa Issue';
+                desc.textContent = data.message || 'Configuration needed';
+            }
+        })
+        .catch(() => {});
+});
+</script>
+{% endblock %}
