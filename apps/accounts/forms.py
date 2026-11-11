@@ -70,19 +70,12 @@ class AdminCreateGuestForm(forms.ModelForm):
 
 
 class ForcePasswordChangeForm(forms.Form):
-    old_password = forms.CharField(label='Current (temporary) password', widget=forms.PasswordInput(attrs={'class': 'form-control form-control-lg'}))
     new_password1 = forms.CharField(label='New password', min_length=8, widget=forms.PasswordInput(attrs={'class': 'form-control form-control-lg', 'minlength': '8'}))
     new_password2 = forms.CharField(label='Confirm new password', min_length=8, widget=forms.PasswordInput(attrs={'class': 'form-control form-control-lg', 'minlength': '8'}))
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super().__init__(*args, **kwargs)
-
-    def clean_old_password(self):
-        old = self.cleaned_data.get('old_password')
-        if not self.user.check_password(old):
-            raise forms.ValidationError('Your current password is incorrect.')
-        return old
 
     def clean(self):
         cleaned = super().clean()
