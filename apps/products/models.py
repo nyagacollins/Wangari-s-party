@@ -37,7 +37,7 @@ class Event(models.Model):
 
 class WishlistItem(models.Model):
     title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='wishlist/')
+    image = models.ImageField(upload_to='wishlist/', blank=True, null=True)
     description = models.TextField(blank=True)
     link = models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
@@ -59,6 +59,41 @@ class OutfitIdea(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class ScheduleItem(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order', 'start_time', 'created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class Activity(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    time = models.DateTimeField(null=True, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['time', '-created_at']
+        verbose_name_plural = 'Activities'
 
     def __str__(self):
         return self.title

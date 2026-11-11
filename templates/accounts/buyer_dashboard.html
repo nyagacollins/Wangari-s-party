@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Your Invitation — Wangari's Birthday{% endblock %}
 
@@ -20,14 +21,14 @@
     <div class="card h-100">
       <div class="card-header"><h5 class="mb-0"><i class="fas fa-envelope-open-text me-2" style="color:var(--primary);"></i>Invitation</h5></div>
       <div class="card-body p-4">
-        <p class="lead mb-3" style="font-family:'Playfair Display',serif;">
-          Dear <strong>{{ user.real_name|default:user.username }}</strong>,
-        </p>
+        <p class="lead mb-3" style="font-family:'Playfair Display',serif;">Dear <strong>{{ user.real_name|default:user.username }}</strong>,</p>
         <p>We are delighted to invite you to join us in celebrating <strong>{% if event %}{{ event.title }}{% else %}Wangari's Birthday{% endif %}</strong>.</p>
         <div class="p-3 rounded-3 mb-3" style="background:var(--primary-light);">
           <div class="mb-2"><i class="fas fa-user me-2" style="color:var(--primary);"></i><strong>Guest:</strong> {{ user.real_name|default:user.username }}</div>
           <div class="mb-2"><i class="fas fa-envelope me-2" style="color:var(--primary);"></i><strong>Email:</strong> {{ user.email }}</div>
-          <div><i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i><strong>Your Location:</strong> {{ user.location|default:"Not specified" }}</div>
+          <div class="mb-2"><i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i><strong>Your Location:</strong> <span id="user-location-text">{{ user.location|default:"Not detected yet" }}</span></div>
+          <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="detect-location-btn"><i class="fas fa-location-crosshairs me-1"></i>Share My Current Location</button>
+          <div class="small mt-2" id="location-status" style="color:var(--text-muted);"></div>
         </div>
 
         {% if event %}
@@ -36,13 +37,18 @@
           {% if event.venue %}<p class="mb-1"><strong>Venue/Location:</strong> {{ event.venue }}</p>{% endif %}
           {% if event.event_date %}<p class="mb-1"><strong>Date & Time:</strong> {{ event.event_date|date:"l, M d, Y — g:i A" }}</p>{% endif %}
           {% if event.description %}<p class="mb-1">{{ event.description|linebreaksbr }}</p>{% endif %}
+          {% if event.venue %}
+          <div class="mt-2 d-flex flex-wrap gap-2">
+            <a id="directions-link" href="https://www.google.com/maps/dir/?api=1&destination={{ event.venue|urlencode }}" target="_blank" rel="noopener" class="btn btn-sm btn-primary">
+              <i class="fas fa-route me-1"></i>Get Directions to Event
+            </a>
+            <a href="https://www.google.com/maps/search/?api=1&query={{ event.venue|urlencode }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-map me-1"></i>View on Map
+            </a>
+          </div>
+          <div class="small mt-2" style="color:var(--text-muted);">Allow location access so we can guide you from where you are.</div>
+          {% endif %}
         </div>
-        {% if event.schedule %}
-        <div class="p-3 rounded-3 mb-3" style="background:rgba(137,180,232,0.12);">
-          <h6 class="fw-bold mb-2"><i class="fas fa-clock me-2"></i>Schedule</h6>
-          <div>{{ event.schedule|linebreaks }}</div>
-        </div>
-        {% endif %}
         {% if event.additional_info %}
         <div class="p-3 rounded-3" style="background:rgba(240,195,109,0.12);">
           <h6 class="fw-bold mb-2"><i class="fas fa-info-circle me-2"></i>Additional Information</h6>
@@ -57,7 +63,21 @@
   </div>
 
   <div class="col-lg-5">
-    <div class="card h-100">
+    <div class="card h-100 mb-4">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-ticket-alt me-2" style="color:var(--primary);"></i>Your Entry Ticket</h5></div>
+      <div class="card-body text-center">
+        <p class="mb-2"><span class="badge bg-success px-3 py-2"><i class="fas fa-check-circle me-1"></i>PAID / CONFIRMED</span></p>
+        <p class="mb-1"><strong>{{ user.real_name|default:user.username }}</strong></p>
+        <p class="small" style="color:var(--text-muted);">Present this QR code at the entrance for scanning.</p>
+        {% if qr_image %}
+          <img src="{{ qr_image }}" alt="Ticket QR code" class="img-fluid border rounded p-2 bg-white" style="max-width:220px;">
+          <p class="small mt-2 mb-0" style="color:var(--text-muted);">Ticket ID: {{ user.ticket_code|slice:":8" }}…</p>
+        {% else %}
+          <p class="text-warning mb-0">QR code unavailable right now. Please refresh.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card">
       <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Good to Know</h5></div>
       <div class="card-body">
         <ul class="list-unstyled mb-0">
@@ -66,6 +86,57 @@
           <li class="mb-3"><i class="fas fa-tshirt me-2" style="color:var(--rose);"></i>See outfit inspiration to match the vibe.</li>
           <li><i class="fas fa-heart me-2" style="color:var(--danger);"></i>We can't wait to celebrate with you!</li>
         </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-clock me-2" style="color:var(--primary);"></i>Schedule</h5></div>
+      <div class="card-body">
+        {% if schedule_items %}
+          <ul class="list-group list-group-flush">
+            {% for item in schedule_items %}
+            <li class="list-group-item px-0">
+              <div class="fw-bold">{{ item.title }}</div>
+              <div class="small" style="color:var(--text-muted);">
+                {% if item.start_time %}{{ item.start_time|date:"M d, g:i A" }}{% endif %}{% if item.end_time %} – {{ item.end_time|date:"g:i A" }}{% endif %}
+                {% if item.location %} · <i class="fas fa-map-marker-alt"></i> {{ item.location }}{% endif %}
+              </div>
+              {% if item.description %}<div class="small mt-1">{{ item.description }}</div>{% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        {% elif event and event.schedule %}
+          <div>{{ event.schedule|linebreaks }}</div>
+        {% else %}
+          <p class="mb-0" style="color:var(--text-muted);">Schedule will appear here soon.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header"><h5 class="mb-0"><i class="fas fa-star me-2" style="color:var(--primary);"></i>Activities</h5></div>
+      <div class="card-body">
+        {% if activities %}
+          <ul class="list-group list-group-flush">
+            {% for a in activities %}
+            <li class="list-group-item px-0">
+              <div class="fw-bold">{{ a.title }}</div>
+              <div class="small" style="color:var(--text-muted);">
+                {% if a.time %}{{ a.time|date:"M d, g:i A" }}{% endif %}
+                {% if a.location %} · <i class="fas fa-map-marker-alt"></i> {{ a.location }}{% endif %}
+              </div>
+              {% if a.description %}<div class="small mt-1">{{ a.description }}</div>{% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="mb-0" style="color:var(--text-muted);">Activities will appear here soon.</p>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -81,9 +152,10 @@
           {% for item in wishlist_items %}
           <div class="col-sm-6 col-lg-4 col-xl-3">
             <div class="card h-100 border-0" style="background:var(--light-bg);">
-              {% if item.image %}<img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" style="height:180px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
+              {% if item.display_src %}<img src="{{ item.display_src }}" class="card-img-top" alt="{{ item.title }}" style="height:180px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
               <div class="card-body">
-                <h6 class="fw-bold mb-1">{{ item.title }}</h6>
+                {% if not item.display_src %}<div style="font-size:2rem;">{{ item.emoji|default:"🎁" }}</div>{% endif %}
+                <h6 class="fw-bold mb-1 mt-2">{{ item.title }}</h6>
                 {% if item.description %}<p class="small mb-2" style="color:var(--text-muted);">{{ item.description }}</p>{% endif %}
                 {% if item.link %}<a href="{{ item.link }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">View item</a>{% endif %}
               </div>
@@ -109,10 +181,12 @@
           {% for idea in outfit_ideas %}
           <div class="col-sm-6 col-lg-4 col-xl-3">
             <div class="card h-100 border-0" style="background:var(--light-bg);">
-              {% if idea.image %}<img src="{{ idea.image.url }}" class="card-img-top" alt="{{ idea.title }}" style="height:220px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
+              {% if idea.display_src %}<img src="{{ idea.display_src }}" class="card-img-top" alt="{{ idea.title }}" style="height:220px;object-fit:cover;border-radius:12px 12px 0 0;">{% endif %}
               <div class="card-body">
-                <h6 class="fw-bold mb-1">{{ idea.title }}</h6>
+                {% if not idea.display_src %}<div style="font-size:2rem;">{{ idea.emoji|default:"👗" }}</div>{% endif %}
+                <h6 class="fw-bold mb-1 mt-2">{{ idea.title }}</h6>
                 {% if idea.description %}<p class="small mb-0" style="color:var(--text-muted);">{{ idea.description }}</p>{% endif %}
+                {% if idea.link %}<a href="{{ idea.link }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View</a>{% endif %}
               </div>
             </div>
           </div>
@@ -125,4 +199,51 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  const btn = document.getElementById('detect-location-btn');
+  const status = document.getElementById('location-status');
+  const text = document.getElementById('user-location-text');
+  const dirLink = document.getElementById('directions-link');
+  const dest = "{% if event and event.venue %}{{ event.venue|escapejs }}{% endif %}";
+  if (!btn) return;
+  function getCookie(name){const v=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)');return v?decodeURIComponent(v.pop()):'';}
+  function updateDirections(lat,lng){
+    if (dirLink && dest) {
+      dirLink.href = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(lat + "," + lng) + "&destination=" + encodeURIComponent(dest);
+    }
+  }
+  async function captureLocation(silent) {
+    if (!navigator.geolocation) { if(!silent) status.textContent = 'Geolocation is not supported by your browser.'; return; }
+    if (!silent) status.textContent = 'Detecting your location…';
+    navigator.geolocation.getCurrentPosition(async function(pos) {
+      const lat = pos.coords.latitude, lng = pos.coords.longitude;
+      let label = lat.toFixed(5) + ', ' + lng.toFixed(5);
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`, {headers:{'Accept':'application/json'}});
+        if (r.ok) { const j = await r.json(); label = j.display_name || label; }
+      } catch(e) {}
+      try {
+        const resp = await fetch("{% url 'accounts:update_my_location' %}", {
+          method: 'POST',
+          headers: {'Content-Type':'application/json','X-CSRFToken': getCookie('csrftoken')},
+          body: JSON.stringify({latitude: lat, longitude: lng, label: label})
+        });
+        const j = await resp.json();
+        if (j.ok) {
+          text.textContent = j.location || label;
+          updateDirections(lat,lng);
+          status.textContent = silent ? 'Location detected. Tap “Get Directions to Event” for guidance.' : 'Location saved. Thank you!';
+        } else if (!silent) { status.textContent = j.error || 'Could not save location.'; }
+      } catch(e) { if(!silent) status.textContent = 'Could not save location.'; }
+    }, function(err){ if(!silent) status.textContent = 'Unable to get location: ' + (err.message || 'permission denied'); }, {enableHighAccuracy:true, timeout:10000});
+  }
+  btn.addEventListener('click', function(){ captureLocation(false); });
+  // try auto-detect shortly after load (browser may prompt)
+  setTimeout(function(){ captureLocation(true); }, 800);
+})();
+</script>
 {% endblock %}

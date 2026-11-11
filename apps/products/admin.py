@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TicketType, Event, WishlistItem, OutfitIdea
+from .models import TicketType, Event, WishlistItem, OutfitIdea, ScheduleItem, Activity
 
 
 @admin.register(TicketType)
@@ -28,3 +28,21 @@ class OutfitIdeaAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_active', 'created_at')
     list_filter = ('is_active',)
     search_fields = ('title',)
+
+
+@admin.register(ScheduleItem)
+class ScheduleItemAdmin(admin.ModelAdmin):
+    list_display = ('title', 'start_time', 'end_time', 'location', 'order', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'location', 'description')
+    ordering = ('order', 'start_time')
+    list_editable = ('order', 'is_active')
+
+
+@admin.register(Activity)
+class ActivityAdmin(admin.ModelAdmin):
+    list_display = ('title', 'time', 'location', 'is_active', 'created_at')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'location', 'description')
+    ordering = ('time', '-created_at')
+    list_editable = ('is_active',)

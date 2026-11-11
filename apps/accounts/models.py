@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -62,7 +63,12 @@ class User(AbstractUser):
     real_name = models.CharField(max_length=150, blank=True, default='')
     email_verified = models.BooleanField(default=False)
     location = models.CharField(max_length=255, blank=True, default='')
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     must_change_password = models.BooleanField(default=False)
+    ticket_code = models.CharField(max_length=64, unique=True, null=True, blank=True, db_index=True)
+    ticket_issued_at = models.DateTimeField(null=True, blank=True)
+    has_paid = models.BooleanField(default=True)
 
     objects = UserManager()
 
@@ -74,3 +80,11 @@ class User(AbstractUser):
 
     def is_buyer(self):
         return self.role == 'BUYER'
+
+    def ensure_ticket(self):
+        if self.is_buyer() and not self.ticket_code:
+            self.ticket_code = uuid.uuid4().hex
+            if not self.ticket_issued_at:
+                self.ticket_issued_at = timezone.now()
+            self.save(update_fields=['ticket_code', 'ticket_issued_at'])
+        return self.ticket_code

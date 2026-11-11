@@ -1,0 +1,16 @@
+﻿OUTFIT IDEAS IMAGES - EASY GUIDE
+================================
+
+OPTION 1: Drop image files here
+- Put your image files in this folder: static/images/outfits/
+- Open items.json in this same folder
+- For the item you want, set "image" to the filename, e.g. "image": "outfit1.jpg"
+- Leave "image_url" as ""
+
+OPTION 2: Paste an image URL
+- Open items.json in this folder
+- For the item you want, paste the full URL in "image_url", e.g. "image_url": "https://example.com/photo.jpg"
+- You can leave "image" empty
+
+You can also edit title, description, and emoji for each item.
+Save items.json, then refresh the site (and redeploy/collectstatic if live).

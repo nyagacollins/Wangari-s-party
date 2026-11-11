@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
       <div>
         <h2 style="font-family:'Playfair Display',serif;"><i class="fas fa-users me-2" style="color:var(--primary);"></i>Manage Guests</h2>
-        <p style="color:var(--text-muted);">Guests invited to Wangari's birthday</p>
+        <p style="color:var(--text-muted);">Guests invited to Wangari's birthday (scan tickets at entrance)</p>
       </div>
       <a href="{% url 'accounts:register_buyer' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Guest</a>
     </div>
@@ -17,12 +17,12 @@
 
 <div class="row">
   <div class="col-12">
-    <div class="card">
+    <div class="card mb-4">
       <div class="card-body">
         {% if buyers %}
         <div class="table-responsive">
           <table class="table table-hover align-middle">
-            <thead><tr><th>Name</th><th>Email</th><th>Username</th><th>Location</th><th>Password Changed?</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Name</th><th>Email</th><th>Username</th><th>Location</th><th>Paid/Ticket</th><th>Password</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
               {% for buyer in buyers %}
               <tr>
@@ -30,9 +30,12 @@
                 <td>{{ buyer.email }}</td>
                 <td>{{ buyer.username }}</td>
                 <td>{{ buyer.location|default:"-" }}</td>
-                <td>{% if buyer.must_change_password %}<span class="badge bg-warning text-dark">Pending</span>{% else %}<span class="badge bg-success">Yes</span>{% endif %}</td>
+                <td>
+                  {% if buyer.has_paid %}<span class="badge bg-success">Paid</span>{% else %}<span class="badge bg-secondary">Unpaid</span>{% endif %}
+                  {% if buyer.ticket_code %}<a href="{% url 'accounts:scan_ticket' buyer.ticket_code %}" class="btn btn-sm btn-outline-primary ms-1" title="Open ticket/scan view"><i class="fas fa-qrcode"></i></a>{% endif %}
+                </td>
+                <td>{% if buyer.must_change_password %}<span class="badge bg-warning text-dark">Pending</span>{% else %}<span class="badge bg-success">Changed</span>{% endif %}</td>
                 <td>{% if buyer.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Inactive</span>{% endif %}</td>
-                <td>{{ buyer.date_joined|date:"M d, Y" }}</td>
                 <td>
                   <div class="d-flex gap-2">
                     <a href="{% url 'accounts:toggle_buyer_status' buyer.id %}" class="btn btn-sm btn-outline-{% if buyer.is_active %}warning{% else %}success{% endif %}" title="{% if buyer.is_active %}Deactivate{% else %}Activate{% endif %}">
@@ -58,6 +61,47 @@
           <p style="color:var(--text-muted);">Add guests and email them their login credentials.</p>
           <a href="{% url 'accounts:register_buyer' %}" class="btn btn-primary mt-2"><i class="fas fa-plus me-2"></i>Add First Guest</a>
         </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center"><h5 class="mb-0"><i class="fas fa-clock me-2"></i>Schedule (guests can see)</h5><a href="/admin/products/scheduleitem/add/" class="btn btn-sm btn-primary">Add</a></div>
+      <div class="card-body">
+        {% if schedule_items %}
+          <ul class="list-group list-group-flush">
+            {% for item in schedule_items %}
+            <li class="list-group-item px-0 d-flex justify-content-between align-items-start">
+              <div><strong>{{ item.title }}</strong><br><small class="text-muted">{% if item.start_time %}{{ item.start_time|date:"M d, g:i A" }}{% endif %}{% if item.location %} · {{ item.location }}{% endif %}</small></div>
+              <a href="/admin/products/scheduleitem/{{ item.id }}/change/" class="btn btn-sm btn-outline-secondary">Edit</a>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="mb-0" style="color:var(--text-muted);">No schedule items. <a href="/admin/products/scheduleitem/add/">Add one</a>.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center"><h5 class="mb-0"><i class="fas fa-star me-2"></i>Activities (guests can see)</h5><a href="/admin/products/activity/add/" class="btn btn-sm btn-primary">Add</a></div>
+      <div class="card-body">
+        {% if activities %}
+          <ul class="list-group list-group-flush">
+            {% for a in activities %}
+            <li class="list-group-item px-0 d-flex justify-content-between align-items-start">
+              <div><strong>{{ a.title }}</strong><br><small class="text-muted">{% if a.time %}{{ a.time|date:"M d, g:i A" }}{% endif %}{% if a.location %} · {{ a.location }}{% endif %}</small></div>
+              <a href="/admin/products/activity/{{ a.id }}/change/" class="btn btn-sm btn-outline-secondary">Edit</a>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="mb-0" style="color:var(--text-muted);">No activities. <a href="/admin/products/activity/add/">Add one</a>.</p>
         {% endif %}
       </div>
     </div>
